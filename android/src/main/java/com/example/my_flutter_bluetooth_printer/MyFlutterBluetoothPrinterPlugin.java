@@ -25,13 +25,15 @@ public class MyFlutterBluetoothPrinterPlugin implements FlutterPlugin, MethodCal
   private MethodChannel channel;
   //  程序上下文
   private Context applicationContext;
+  private MyListener listener;
+  private BasicMessageChannel<Object> flutter_channel;
   //  flutter于原生Android端通信通道名称
   private static final String FLUTTER_TO_ANDROID_CHANNEL = "flutter_printer_android";
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
     applicationContext = flutterPluginBinding.getApplicationContext();
 
-    BasicMessageChannel<Object> flutter_channel = new BasicMessageChannel<>(
+     flutter_channel = new BasicMessageChannel<>(
             flutterPluginBinding.getBinaryMessenger(),
             FLUTTER_TO_ANDROID_CHANNEL,
             StandardMessageCodec.INSTANCE
@@ -45,7 +47,7 @@ public class MyFlutterBluetoothPrinterPlugin implements FlutterPlugin, MethodCal
         String channel_name = (String) channelMessage.get("channelName");
         if (channel_name == null) return;
         Log.e("channelName", channel_name);
-        new MyListener(     //  创建新的蓝牙事件监听类实例
+        listener = new MyListener(     //  创建新的蓝牙事件监听类实例
                 channel_name,
                 applicationContext,
                 flutterPluginBinding.getBinaryMessenger());
@@ -61,9 +63,13 @@ public class MyFlutterBluetoothPrinterPlugin implements FlutterPlugin, MethodCal
       result.notImplemented();
     }
   }
+
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
-    channel.setMethodCallHandler(null);
+//    channel.setMethodCallHandler(null);
+//    listener.getMessage_channel().setMessageHandler(null);
+    listener = null;
+    flutter_channel = null;
   }
 
   public static <K, V> Map<K, V> castMap(Object obj, Class<K> key, Class<V> value) {

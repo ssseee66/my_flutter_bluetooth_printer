@@ -340,4 +340,7 @@ public class MyListener {
         return true;
     }
 
+    public BasicMessageChannel<Object> getMessage_channel() {
+        return message_channel;
+    }
 }
