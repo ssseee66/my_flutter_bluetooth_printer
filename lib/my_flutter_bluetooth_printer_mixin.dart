@@ -1,10 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:my_flutter_bluetooth_printer/my_flutter_bluetooth_printer_util.dart';
 
-import 'my_flutter_bluetooth_printer.dart';
 
 mixin MyFlutterBluetoothPrinterMixin<T extends StatefulWidget> on State<T> {
   late StreamSubscription streamSubscription;

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:my_flutter_bluetooth_printer/printer_failed_code.dart';
 import 'package:my_flutter_bluetooth_printer/printer_operation_code.dart';
 
 class MyFlutterBluetoothPrinterUtil {
@@ -47,6 +48,22 @@ class MyFlutterBluetoothPrinterUtil {
       }
     }
     return null;
+  }
+  Enum? getPrinterFailedCode(int code) {
+    switch (code) {
+      case 0:
+        return PrinterFailedCode.PERMISSION_DENIED;
+      case 1:
+        return PrinterFailedCode.SCAN_FAILED;
+      case 2:
+        return PrinterFailedCode.PRINTER_NOT_CONNECTED;
+      case 3:
+        return PrinterFailedCode.NOT_SUPPORT_BLUETOOTH;
+      case 4:
+        return PrinterFailedCode.BLUETOOTH_NOT_TURN_ON;
+      default:
+        return null;
+    }
   }
   Enum? getPrinterOperationCode(int code) {
     switch (code) {
