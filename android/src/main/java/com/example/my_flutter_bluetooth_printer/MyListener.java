@@ -130,11 +130,8 @@ public class MyListener {
         Log.e("listener_channel_name", channelName);
         this.applicationContext = applicationContext;
 
-        action_map.put("startConnect", this:: startConnect);
-        action_map.put("startSend", this:: startSend);
-        action_map.put("startScan", this::startScan);
-        action_map.put("stopScan", this::stopScan);
-        action_map.put("closeConnect", this::closeConnect);
+        setActions();
+
         CTPL.getInstance().init((Application) applicationContext, respCallback);
         message_channel.setMessageHandler((message, reply) -> {
             arguments = castMap(message, String.class, Object.class);
@@ -148,11 +145,18 @@ public class MyListener {
     private String getCurrentKey() {
         String key = null;
         if (arguments.containsKey("startConnect"))      key = "startConnect";
-        else if (arguments.containsKey("startSend"))   key = "startSend";
+        else if (arguments.containsKey("startSend"))    key = "startSend";
         else if (arguments.containsKey("startScan"))    key = "startScan";
         else if (arguments.containsKey("stopScan"))     key = "stopScan";
         else if (arguments.containsKey("closeConnect")) key = "closeConnect";
         return key;
+    }
+    private void setActions() {
+        action_map.put("startConnect", this :: startConnect);
+        action_map.put("startSend",    this :: startSend);
+        action_map.put("startScan",    this :: startScan);
+        action_map.put("stopScan",     this :: stopScan);
+        action_map.put("closeConnect", this :: closeConnect);
     }
 
     private void startScan(String key) {
