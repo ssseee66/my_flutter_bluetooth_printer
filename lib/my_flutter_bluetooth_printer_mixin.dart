@@ -11,18 +11,17 @@ mixin MyFlutterBluetoothPrinterMixin<T extends StatefulWidget> on State<T> {
   @override
   void initState() {
     super.initState();
-    util.flutterChannel.setMessageHandler(setMessageChannelHandle);
+    util.flutterChannel.setMessageHandler((dynamic message) async {});
     util.setMessageChannel(hashCode.toString(), listenerBluetoothPrinterAndroidHandle);
     util.sendChannelName("channelName", hashCode.toString());
   }
   @override
   void dispose() {
     super.dispose();
+    util.destroy();
     util.messageChannel.setMessageHandler(null);
     util.flutterChannel.setMessageHandler(null);
   }
 
-  Future<void> setMessageChannelHandle(dynamic message);
   Future<void> listenerBluetoothPrinterAndroidHandle(dynamic message);
-
 }

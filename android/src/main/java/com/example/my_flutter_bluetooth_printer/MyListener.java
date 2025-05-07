@@ -34,7 +34,7 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.StandardMessageCodec;
 
 public class MyListener {
-    private final BasicMessageChannel<Object> message_channel;
+    private BasicMessageChannel<Object> message_channel;
     private final Map<String, Object> message_map = new HashMap<>();
     private Map<String, Object> arguments;
     private final Map<String, Consumer<String>> action_map = new HashMap<>();
@@ -55,6 +55,7 @@ public class MyListener {
                 message_map.put("message", "Insufficient permissions. " +
                         "Please check the relevant permissions and grant them");
                 message_map.put("isSuccessful", false);
+                message_map.put("failedCode", 0);
                 message_map.put("operationCode", 0);
                 message_channel.send(message_map);
             }
@@ -79,6 +80,7 @@ public class MyListener {
             message_map.clear();
             message_map.put("message", "Scan failed");
             message_map.put("isSuccessful", false);
+            message_map.put("failedCode", 1);
             message_map.put("operationCode", 0);
             message_channel.send(message_map);
         }
@@ -149,14 +151,16 @@ public class MyListener {
         else if (arguments.containsKey("startScan"))    key = "startScan";
         else if (arguments.containsKey("stopScan"))     key = "stopScan";
         else if (arguments.containsKey("closeConnect")) key = "closeConnect";
+        else if (arguments.containsKey("destroy"))      key = "destroy";
         return key;
     }
     private void setActions() {
-        action_map.put("startConnect", this :: startConnect);
-        action_map.put("startSend",    this :: startSend);
-        action_map.put("startScan",    this :: startScan);
-        action_map.put("stopScan",     this :: stopScan);
-        action_map.put("closeConnect", this :: closeConnect);
+        action_map.put("startConnect",   this :: startConnect);
+        action_map.put("startSend",      this :: startSend);
+        action_map.put("startScan",      this :: startScan);
+        action_map.put("stopScan",       this :: stopScan);
+        action_map.put("closeConnect",   this :: closeConnect);
+        action_map.put("destroy",        this :: destroy);
     }
 
     private void startScan(String key) {
@@ -236,6 +240,7 @@ public class MyListener {
                 message_map.put("message", "The device is not connected.");
                 message_map.put("operationCode", 4);
                 message_map.put("isSuccessful", false);
+                message_map.put("failedCode", 2);
                 message_channel.send(message_map);
                 return;
             }
@@ -256,6 +261,13 @@ public class MyListener {
         Object value = arguments.get(key);
         if (value == null) return;
         if (!(boolean) value) return;
+        CTPL.getInstance().disconnect();
+    }
+    private void destroy(String key) {
+        Object value = arguments.get(key);
+        if (value == null) return;
+        if (!(boolean) value) return;
+        message_channel = null;
         CTPL.getInstance().disconnect();
     }
     public static <K, V> Map<K, V> castMap(Object obj, Class<K> key, Class<V> value) {
@@ -288,6 +300,7 @@ public class MyListener {
         message_map.clear();
         message_map.put("message", "This device does not support Bluetooth");
         message_map.put("isSuccessful", false);
+        message_map.put("failedCode", 3);
         message_map.put("operationCode", code);
         message_channel.send(message_map);
     }
@@ -295,6 +308,7 @@ public class MyListener {
         message_map.clear();
         message_map.put("message", "Bluetooth is not turned on. Please turn it on");
         message_map.put("isSuccessful", false);
+        message_map.put("failedCode", 4);
         message_map.put("operationCode", code);
         message_channel.send(message_map);
     }
@@ -304,6 +318,7 @@ public class MyListener {
         message_map.put("message", "Insufficient permissions. " +
                 "Please check the relevant permissions and grant them");
         message_map.put("isSuccessful", false);
+        message_map.put("failedCode", 0);
         message_map.put("operationCode", code);
         message_channel.send(message_map);
     }

@@ -11,7 +11,7 @@ class MyFlutterBluetoothPrinterUtil {
   static final MyFlutterBluetoothPrinterUtil _instance = MyFlutterBluetoothPrinterUtil._();
 
   String messageChannelName = "";
-  BasicMessageChannel flutterChannel = const BasicMessageChannel("flutter_printer_android", StandardMessageCodec());
+  BasicMessageChannel flutterChannel = const BasicMessageChannel("my_flutter_bluetooth_printer", StandardMessageCodec());
   BasicMessageChannel messageChannel = const BasicMessageChannel("null", StandardMessageCodec());
 
   void sendMessageToAndroid(String methodName, dynamic arg) async {
@@ -37,6 +37,9 @@ class MyFlutterBluetoothPrinterUtil {
   }
   void closeConnect() {
     messageChannel.send({"closeConnect": true});
+  }
+  void destroy() {
+    messageChannel.send({"destroy": true});
   }
   void send(List<String> printData) {
     messageChannel.send({"startSend": printData});
