@@ -58,8 +58,9 @@ public class MyListener {
                 message_map.put("failedCode", 0);
                 message_map.put("operationCode", 0);
                 message_channel.send(message_map);
+                return;
             }
-            if (device.getType() != BluetoothDevice.DEVICE_TYPE_LE ||
+            if (device.getType() != BluetoothDevice.DEVICE_TYPE_LE &&
                     device.getType() != BluetoothDevice.DEVICE_TYPE_DUAL)
                 return;
             if (deviceList.contains(device)) return;
@@ -182,6 +183,7 @@ public class MyListener {
             return;
         }
         leScanner.startScan(scanCallback);
+        Log.i("startScanInfo", "startScan");
     }
 
     private void stopScan(String key) {
@@ -268,6 +270,7 @@ public class MyListener {
         if (value == null) return;
         if (!(boolean) value) return;
         message_channel = null;
+        leScanner.stopScan(scanCallback);
         CTPL.getInstance().disconnect();
     }
     public static <K, V> Map<K, V> castMap(Object obj, Class<K> key, Class<V> value) {
@@ -351,10 +354,12 @@ public class MyListener {
             Log.e("notPermission", "BLUETOOTH_ADMIN");
             return false;
         }
-        if (ContextCompat.checkSelfPermission(
-                applicationContext, Manifest.permission.BLUETOOTH_CONNECT) == denied) {
-            Log.e("notPermission", "BLUETOOTH_CONNECT");
-            return false;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (ContextCompat.checkSelfPermission(
+                    applicationContext, Manifest.permission.BLUETOOTH_CONNECT) == denied) {
+                Log.e("notPermission", "BLUETOOTH_CONNECT");
+                return false;
+            }
         }
         return true;
     }
